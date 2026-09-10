@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from app.db.base import Base
+from app.db.database import engine
 
 app = FastAPI(
     title="Kenya Rental Management API",
@@ -18,3 +20,5 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+Base.metadata.create_all(bind=engine)
