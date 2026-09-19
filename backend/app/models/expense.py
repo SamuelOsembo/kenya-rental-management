@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from app.core.time import utc_now
 
 from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -43,7 +44,7 @@ class Expense(Base):
     )
 
     expense_date: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
     )
 
@@ -63,7 +64,7 @@ class Expense(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )

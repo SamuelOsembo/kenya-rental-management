@@ -1,4 +1,5 @@
 from datetime import datetime
+from app.core.time import utc_now
 
 from typing import TYPE_CHECKING
 
@@ -74,17 +75,17 @@ class Notification(Base):
     )
 
     scheduled_for: Mapped[datetime | None] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True,
     )
 
     sent_at: Mapped[datetime | None] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True,
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )

@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from app.core.time import utc_now
+
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -61,7 +63,7 @@ class RentCharge(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )

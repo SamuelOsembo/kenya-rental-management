@@ -1,8 +1,8 @@
 from datetime import date, datetime
+from app.core.time import utc_now
 from decimal import Decimal
 from typing import TYPE_CHECKING
-
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Numeric
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Index, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -14,6 +14,25 @@ if TYPE_CHECKING:
 
 class Lease(Base):
     __tablename__ = "leases"
+
+    __table_args__ = (
+    CheckConstraint(
+        "monthly_rent >= 0",
+        name="ck_lease_monthly_rent_nonnegative",
+    ),
+    CheckConstraint(
+        "security_deposit >= 0",
+        name="ck_lease_security_deposit_nonnegative",
+    ),
+    CheckConstraint(
+        "rent_due_day BETWEEN 1 AND 31",
+        name="ck_lease_rent_due_day_valid",
+    ),
+    CheckConstraint(
+        "end_date IS NULL OR end_date >= start_date",
+        name="ck_lease_dates_valid",
+    ),
+)
 
     id: Mapped[int] = mapped_column(
         primary_key=True,
@@ -79,7 +98,16 @@ class Lease(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )
+
+
+Index(
+    "uq_lease_active_unit",
+    Lease.unit_id,
+    unique=True,
+    sqlite_where=Lease.is_active.is_(True),
+    postgresql_where=Lease.is_active.is_(True),
+)

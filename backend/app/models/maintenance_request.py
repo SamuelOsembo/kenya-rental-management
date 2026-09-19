@@ -1,4 +1,6 @@
 from datetime import datetime
+from app.core.time import utc_now
+from decimal import Decimal
 from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -91,12 +93,12 @@ class MaintenanceRequest(Base):
     back_populates="assigned_maintenance_requests",
     )
 
-    estimated_cost: Mapped[float | None] = mapped_column(
+    estimated_cost: Mapped[Decimal | None] = mapped_column(
         Numeric(12, 2),
         nullable=True,
     )
 
-    actual_cost: Mapped[float | None] = mapped_column(
+    actual_cost: Mapped[Decimal | None] = mapped_column(
         Numeric(12, 2),
         nullable=True,
     )
@@ -107,23 +109,23 @@ class MaintenanceRequest(Base):
     )
 
     reported_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )
 
     resolved_at: Mapped[datetime | None] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True,
     )
 
     closed_at: Mapped[datetime | None] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True,
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )

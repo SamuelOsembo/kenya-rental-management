@@ -1,4 +1,6 @@
 from datetime import datetime
+from app.core.time import utc_now
+
 from decimal import Decimal
 from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, ForeignKey, JSON, Numeric, String
@@ -67,7 +69,7 @@ class MpesaTransaction(Base):
     )
 
     transaction_date: Mapped[datetime | None] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True,
     )
 
@@ -93,7 +95,7 @@ class MpesaTransaction(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )

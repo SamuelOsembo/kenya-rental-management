@@ -1,6 +1,7 @@
 from datetime import datetime
+from app.core.time import utc_now
 
-from sqlalchemy import Boolean, DateTime, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, String
 
 from typing import TYPE_CHECKING
 
@@ -14,6 +15,13 @@ if TYPE_CHECKING:
 
 class User(Base):
     __tablename__ = "users"
+
+    __table_args__ = (
+        CheckConstraint(
+            "role IN ('admin', 'landlord', 'property_manager', 'staff')",
+            name="ck_user_role_valid",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
@@ -37,6 +45,13 @@ class User(Base):
         nullable=False,
     )
 
+    role: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="landlord",
+        index=True,
+    )
+
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         default=True,
@@ -44,8 +59,8 @@ class User(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )
 

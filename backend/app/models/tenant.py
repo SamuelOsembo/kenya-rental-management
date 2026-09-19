@@ -1,4 +1,5 @@
 from datetime import datetime
+from app.core.time import utc_now
 
 from typing import TYPE_CHECKING
 
@@ -73,7 +74,7 @@ class Tenant(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-        nullable=False,
-    )
+                DateTime(timezone=True),
+                default=utc_now,
+                nullable=False,
+            )
